@@ -1,21 +1,21 @@
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
+using Infrastructure;
 
-        // Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
-        var app = builder.Build();
+builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 
-        // Configure the HTTP request pipeline.
+var app = builder.Build();
 
-        app.UseAuthorization();
 
-        app.MapControllers();
+#region HTTP Request Pipeline
+app.MapHealthChecks("/api/health");
 
-        app.Run();
-    }
-}
+app.UseAuthorization();
+
+app.MapControllers();
+#endregion
+
+app.Run();
