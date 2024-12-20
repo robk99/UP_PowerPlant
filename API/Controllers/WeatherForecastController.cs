@@ -1,3 +1,5 @@
+using Domain.PowerPlants;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -6,12 +8,14 @@ namespace API.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public AppDbContext DbContext { get; set; }
+        public WeatherForecastController(AppDbContext context)
         {
+            DbContext = context;
         }
 
         [HttpGet]
-        public string Get()
+        public async Task<string> Get()
         {
             return "done";
         }

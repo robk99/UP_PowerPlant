@@ -5,20 +5,30 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.PowerPlants
 {
-    public class PowerPlant(float installedPower, DateTime installationDate, Location location, string? name)
+    public class PowerPlant
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? Name { get; set; } = name;
+        public string? Name { get; set; }
         [Required]
-        [Range(0.1, 100, ErrorMessage = "Installed Power must be positive and less than 100.")]
-        public required float InstalledPower { get; set; } = installedPower;
+        public float InstalledPower { get; set; }
         [Required]
-        public required DateTime InstallationDate { get; set; } = installationDate;
+        public DateTime InstallationDate { get; set; }
         [Required]
-        public required Location Location { get; set; } = location;
-        public required bool IsDeleted { get; set; } = false;
+        public Location Location { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public virtual ICollection<PowerProduction>  PowerProductions { get; set; } = new List<PowerProduction>();
+
+        public PowerPlant(float installedPower, DateTime installationDate, Location location, string? name)
+        {
+            InstalledPower = installedPower;
+            InstallationDate = installationDate;
+            Location = location;
+            Name = name;
+        }
+
+        // Parameterless constructor for EF Core
+        private PowerPlant() { }
     }
 }

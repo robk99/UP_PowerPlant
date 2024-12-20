@@ -22,14 +22,22 @@ namespace Infrastructure.Data
                 {
                     loc.Property(l => l.Latitude)
                         .IsRequired()
-                        .HasColumnType("double")
+                        .HasColumnType("DECIMAL(9,6)")
                         .HasColumnName("Latitude");
 
                     loc.Property(l => l.Longitude)
                         .IsRequired()
-                        .HasColumnType("double")
+                        .HasColumnType("DECIMAL(9,6)")
                         .HasColumnName("Longitude");
-                });
+                })
+                .ToTable(t =>
+                {
+                    t.HasCheckConstraint("CK_PowerPlant_InstalledPower", "InstalledPower >= 0.1 AND InstalledPower <= 100");
+                    t.HasCheckConstraint("CK_PowerPlant_Latitude", "Latitude >= -90 AND Latitude <= 90");
+                    t.HasCheckConstraint("CK_PowerPlant_Longitude", "Longitude >= -180 AND Longitude <= 180");
+                })
+                .Property(p => p.InstallationDate)
+                .HasColumnType("datetime2(3)");
 
             modelBuilder.Entity<PowerProduction>()
                  .HasOne(p => p.PowerPlant)
@@ -40,8 +48,6 @@ namespace Infrastructure.Data
             modelBuilder.Entity<PowerProduction>()
                 .HasIndex(p => new { p.PowerPlantId, p.Timestamp })
                 .IsUnique();
-
-            // TODO: Add all check constraints
         }
 
     }
