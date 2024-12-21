@@ -3,6 +3,10 @@ using Infrastructure.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Domain.PowerPlants;
+using Infrastructure.PowerPlants;
+using Infrastructure.PowerProductions;
+using Domain.PowerProductions;
 
 namespace Infrastructure
 {
@@ -16,6 +20,9 @@ namespace Infrastructure
             {
                 options.UseSqlServer(connectionString);
             });
+
+            services.AddScoped<IPowerPlantRepository, PowerPlantRepository>();
+            services.AddScoped<IPowerProductionRepository, PowerProductionRepository>();
 
             return services;
         }
