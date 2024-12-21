@@ -1,4 +1,5 @@
 ﻿using Domain.PowerProductions;
+using Domain.PowerProductions.Queries;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,7 @@ namespace Infrastructure.PowerProductions
             _context = context;
 
         }
-        public async Task<IEnumerable<PowerProduction>> GetByQuery(PowerProductionQuery query)
+        public async Task<IEnumerable<PowerProduction>> GetTimeseries(PowerProductionTimeseriesQuery query)
         {
             return await _context.PowerProductions
                 .Where(o => (o.PowerPlantId == query.PowerPlantId) &&

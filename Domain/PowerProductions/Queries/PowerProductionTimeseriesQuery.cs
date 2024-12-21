@@ -1,8 +1,6 @@
-﻿
-
-namespace Domain.PowerProductions
+﻿namespace Domain.PowerProductions.Queries
 {
-    public record PowerProductionQuery
+    public record PowerProductionTimeseriesQuery
     {
         public int PowerPlantId { get; set; }
         public DateTime StartDate { get; set; }
