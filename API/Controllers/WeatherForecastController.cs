@@ -1,4 +1,3 @@
-using Domain.PowerPlants;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
