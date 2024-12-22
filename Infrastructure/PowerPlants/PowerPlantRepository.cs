@@ -30,12 +30,13 @@ namespace Infrastructure.PowerPlants
         public async Task<bool> Update(PowerPlant powerPlant)
         {
             var existingPowerPlant = await _context.PowerPlants
-              .FirstOrDefaultAsync(o => o.Id == powerPlant.Id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.Id == powerPlant.Id);
 
             if (existingPowerPlant == null || existingPowerPlant.IsDeleted)
                 return false;
 
-            _context.PowerPlants.Update(existingPowerPlant);
+            _context.PowerPlants.Update(powerPlant);
             await _context.SaveChangesAsync();
 
             return true;
