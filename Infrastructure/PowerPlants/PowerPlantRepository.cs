@@ -13,7 +13,6 @@ namespace Infrastructure.PowerPlants
             _context = context;
         }
 
-
         public async Task<PowerPlant?> GetById(int id)
         {
             return await _context.PowerPlants.FindAsync(id);

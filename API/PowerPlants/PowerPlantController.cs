@@ -1,15 +1,17 @@
 using API.PowerPlants.Requests;
 using API.PowerPlants.Responses;
 using Domain.PowerPlants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/power-plant")]
     public class PowerPlantController : ControllerBase
     {
-        private IPowerPlantRepository _powerPlantRepository { get; set; }
+        private readonly IPowerPlantRepository _powerPlantRepository;
         public PowerPlantController(IPowerPlantRepository powerPlantRepository)
         {
             _powerPlantRepository = powerPlantRepository;
@@ -23,13 +25,25 @@ namespace API.Controllers
             var powerPlant = await _powerPlantRepository.GetById(id);
             if (powerPlant == null) return NotFound(null);
 
-            return Ok("asdf");
+            // TODO: Centralize mapping
+            var response = new PowerPlantResponse()
+            {
+                Id = powerPlant.Id,
+                Name = powerPlant.Name,
+                InstallationDate = powerPlant.InstallationDate,
+                InstalledPower = powerPlant.InstalledPower,
+                Latitude = (double)powerPlant.Location?.Latitude,
+                Longitude = (double)powerPlant.Location?.Longitude
+            };
+
+            return Ok(response);
         }
 
 
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] PowerPlantUpsertRequest powerPlantRequest)
         {
+            // TODO: Centralize mapping
             var powerPlant = new PowerPlant(powerPlantRequest.InstalledPower, powerPlantRequest.InstallationDate, 
                 new Domain.Locations.Location(powerPlantRequest.Latitude, powerPlantRequest.Longitude), powerPlantRequest.Name);
 
@@ -41,6 +55,7 @@ namespace API.Controllers
         [HttpPut("update")]
         public async Task<ActionResult> Update([FromBody] PowerPlantUpsertRequest powerPlantRequest)
         {
+            // TODO: Centralize mapping
             var powerPlant = new PowerPlant(powerPlantRequest.InstalledPower, powerPlantRequest.InstallationDate,
                 new Domain.Locations.Location(powerPlantRequest.Latitude, powerPlantRequest.Longitude), powerPlantRequest.Name);
             powerPlant.Id = (int)powerPlantRequest.Id;

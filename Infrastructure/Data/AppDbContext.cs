@@ -1,5 +1,6 @@
 ﻿using Domain.PowerPlants;
 using Domain.PowerProductions;
+using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -12,6 +13,7 @@ namespace Infrastructure.Data
 
         public DbSet<PowerPlant> PowerPlants { get; set; }
         public DbSet<PowerProduction> PowerProductions { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

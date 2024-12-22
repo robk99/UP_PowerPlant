@@ -3,15 +3,17 @@ using API.PowerProductions.Responses;
 using Domain.Enums;
 using Domain.PowerProductions;
 using Domain.PowerProductions.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/power-production")]
     public class PowerProductionController : ControllerBase
     {
-        private IPowerProductionRepository _powerProductionRepository { get; set; }
+        private readonly IPowerProductionRepository _powerProductionRepository;
         public PowerProductionController(IPowerProductionRepository powerProductionRepository)
         {
             _powerProductionRepository = powerProductionRepository;
@@ -23,7 +25,7 @@ namespace API.Controllers
             switch (request.TimeseriesType)
             {
                 case TimeseriesType.RealProduction:
-                    // TODO: map with automapper PowerProductionTimeseriesRequest --> PowerProductionTimeseriesQuery
+                    // TODO: Centralize mapping
                     var query = new PowerProductionTimeseriesQuery
                     {
                         PowerPlantId = request.PowerPlantId,
@@ -33,7 +35,7 @@ namespace API.Controllers
                     var powerProductions = await _powerProductionRepository.GetTimeseries(query);
                     if (powerProductions.Count() == 0) return NotFound(null);
 
-                    // TODO: map with automapper? List<PowerProduction> --> PowerProductionTimeseriesResponse
+                    // TODO: Centralize mapping
                     var response = new PowerProductionTimeseriesResponse
                     {
                         PowerPlantId = request.PowerPlantId,
