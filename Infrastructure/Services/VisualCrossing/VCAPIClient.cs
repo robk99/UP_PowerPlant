@@ -30,25 +30,16 @@ namespace Infrastructure.Services.VisualCrossing
                 $"{FormatDateForAPI(request.StartDate)}/{FormatDateForAPI(request.EndDate)}" +
                 $"?unitGroup=metric&key={_apiKey}";
 
-            try
+            using (var client = _clientFactory.CreateClient())
             {
-                using (var client = _clientFactory.CreateClient())
+                var response = await client.GetAsync(endpointUrl);
+                response.EnsureSuccessStatusCode();
+
+                using (var contentStream = await response.Content.ReadAsStreamAsync())
                 {
-                    var response = await client.GetAsync(endpointUrl);
-                    response.EnsureSuccessStatusCode();
-
-                    using (var contentStream = await response.Content.ReadAsStreamAsync())
-                    {
-                        return await JsonSerializer.DeserializeAsync<VcGeospatialWeatherResponse>(contentStream);
-                    }
-
+                    return await JsonSerializer.DeserializeAsync<VcGeospatialWeatherResponse>(contentStream);
                 }
-            }
-            catch (HttpRequestException ex)
-            {
-                // TODO: centralize logging and messages
-                Console.WriteLine($"An error fetching the data from API");
-                throw;
+
             }
         }
 

@@ -1,26 +1,32 @@
 using Infrastructure;
 using Infrastructure.Data;
 using Application;
+using API;
+using Serilog;
+using API.Infrastructure.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.ConfigureLogging(builder.Configuration);
+
 builder.Services
     .AddApplication()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(builder.Configuration)
+    .AddPresentation();
 
-builder.Services.AddControllers();
-builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-
 #region HTTP Request Pipeline
+
 app.MapHealthChecks("/api/health");
 
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabase();
 }
+
+app.UseExceptionHandler();
 
 app.UseAuthentication();
 

@@ -7,6 +7,7 @@ using Domain.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data
 {
@@ -27,11 +28,13 @@ namespace Infrastructure.Data
     {
         private readonly AppDbContext _context;
         private readonly IHashingService _hashingService;
+        private readonly ILogger<AppDbContextInitialiser> _logger;
 
-        public AppDbContextInitialiser(AppDbContext context, IHashingService hashingService)
+        public AppDbContextInitialiser(AppDbContext context, IHashingService hashingService, ILogger<AppDbContextInitialiser> logger)
         {
             _context = context;
             _hashingService = hashingService;
+            _logger = logger;
         }
 
         public async Task ApplyMigrations()
@@ -41,7 +44,7 @@ namespace Infrastructure.Data
                 if (_context.Database.GetPendingMigrations().Any())
                 {
                     Console.WriteLine("----------------- APPLYING DB MIGRATIONS -----------------");
-                    _context.Database.Migrate();
+                    await _context.Database.MigrateAsync();
                 }
                 else
                 {
@@ -50,8 +53,7 @@ namespace Infrastructure.Data
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception and setup appropriate error message fetching and error handling
-                Console.WriteLine("An error occurred while initialising the database.");
+                _logger.LogError(ex, "An error occurred while initializing the database.");
                 throw;
             }
         }
@@ -64,9 +66,7 @@ namespace Infrastructure.Data
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception and setup appropriate error message fetching and error handling
-                Console.WriteLine("An error occurred while seeding the database.");
-                throw;
+                _logger.LogError(ex, "An error occurred while seeding the database.");
             }
         }
 
