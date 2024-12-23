@@ -13,6 +13,7 @@ using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application.Authentication;
 
 namespace Infrastructure
 {
@@ -32,8 +33,10 @@ namespace Infrastructure
                 .AddScoped<IPowerProductionRepository, PowerProductionRepository>()
                 .AddScoped<IUserRepository, UserRepository>();
 
+            services.AddSingleton<IHashingService, HashingService>();
+
             services
-                .AddSingleton<TokenService>()
+                .AddSingleton<ITokenService, TokenService>()
                 .AddJWTAuthentication(configuration)
                 .AddAuthorization();
 

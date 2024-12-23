@@ -1,4 +1,5 @@
-﻿using Domain.Users;
+﻿using Application.Authentication;
+using Domain.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Infrastructure.Authentication
 {
-    public class TokenService(IConfiguration configuration)
+    public class TokenService(IConfiguration configuration) : ITokenService
     {
         public string CreateToken(User user)
         {
