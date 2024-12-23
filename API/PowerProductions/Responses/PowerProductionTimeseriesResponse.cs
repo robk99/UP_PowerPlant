@@ -3,7 +3,7 @@
     public record PowerProductionData
     {
         public string Timestamp { get; set; }
-        public float PowerProduced { get; set; }
+        public double PowerProduced { get; set; }
     }
     public record PowerProductionTimeseriesResponse
     {

@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Application.Authentication;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Infrastructure.Services.VisualCrossing;
+using Application.Services.VisualCrossing;
 
 namespace Infrastructure
 {
@@ -22,14 +24,19 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+
+
             services.AddPersistenceLayer(configuration);
 
             services.AddSingleton<IHashingService, HashingService>();
+            services.AddSingleton<IVcForecastService, VcForecastService>();
 
             services
                 .AddSingleton<ITokenService, TokenService>()
                 .AddJWTAuthentication(configuration)
                 .AddAuthorization();
+
+            services.AddHttpClients(configuration);
 
             return services;
         }
@@ -73,6 +80,17 @@ namespace Infrastructure
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
+            return services;
+        }
+
+        private static IServiceCollection AddHttpClients(
+           this IServiceCollection services,
+           IConfiguration configuration)
+        {
+            services.AddHttpClient<IVcAPIClient, VcAPIClient>();
+
+            services.AddScoped<IVcAPIClient, VcAPIClient>();
 
             return services;
         }
