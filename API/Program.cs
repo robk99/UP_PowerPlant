@@ -1,3 +1,4 @@
+using API.Extensions;
 using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,11 @@ var app = builder.Build();
 
 #region HTTP Request Pipeline
 app.MapHealthChecks("/api/health");
+
+if (app.Environment.IsDevelopment())
+{
+    app.ApplyMigrations();
+}
 
 app.UseAuthentication();
 

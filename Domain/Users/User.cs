@@ -1,10 +1,11 @@
 ﻿
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Domain.Common;
 
 namespace Domain.Users
 {
-    public class User
+    public class User : AuditDetails
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

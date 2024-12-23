@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Application.Authentication;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Infrastructure
 {
@@ -23,8 +24,10 @@ namespace Infrastructure
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
+            services.AddScoped<ISaveChangesInterceptor, UpdateAuditDetailsInterceptor>();
             services.AddDbContext<AppDbContext>((sp, options) =>
             {
+                options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
                 options.UseSqlServer(connectionString);
             });
             

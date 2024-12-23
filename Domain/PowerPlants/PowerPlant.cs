@@ -1,11 +1,12 @@
-﻿using Domain.Locations;
+﻿using Domain.Common;
+using Domain.Locations;
 using Domain.PowerProductions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.PowerPlants
 {
-    public class PowerPlant
+    public class PowerPlant : AuditDetails
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

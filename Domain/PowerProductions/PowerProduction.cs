@@ -2,10 +2,11 @@
 using Domain.PowerPlants;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Domain.Common;
 
 namespace Domain.PowerProductions
 {
-    public class PowerProduction
+    public class PowerProduction : AuditDetails
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
