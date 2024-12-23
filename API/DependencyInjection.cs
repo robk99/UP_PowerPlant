@@ -9,6 +9,8 @@ namespace API
             services.AddControllers();
             services.AddHealthChecks();
 
+            services.AddSwaggerGen();
+
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
 
