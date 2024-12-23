@@ -1,6 +1,6 @@
 ﻿using Domain.Enums;
 
-namespace API.PowerProductions.Requests
+namespace Application.PowerProductions.Requests
 {
     public record PowerProductionTimeseriesRequest
     {

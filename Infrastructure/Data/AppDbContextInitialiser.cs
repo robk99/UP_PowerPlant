@@ -1,5 +1,4 @@
-﻿
-using Application.Authentication;
+﻿using Application.Authentication;
 using Domain.Locations;
 using Domain.PowerPlants;
 using Domain.PowerProductions;

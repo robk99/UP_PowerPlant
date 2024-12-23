@@ -1,10 +1,11 @@
-using API.PowerPlants.Requests;
-using API.PowerPlants.Responses;
+using Application.PowerPlants;
+using Application.PowerPlants.Requests;
+using Application.PowerPlants.Responses;
 using Domain.PowerPlants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace Application.Controllers
 {
     [ApiController]
     [Authorize]
@@ -12,9 +13,12 @@ namespace API.Controllers
     public class PowerPlantController : ControllerBase
     {
         private readonly IPowerPlantRepository _powerPlantRepository;
-        public PowerPlantController(IPowerPlantRepository powerPlantRepository)
+        private readonly PowerPlantMapper _powerPlantMapper;
+
+        public PowerPlantController(IPowerPlantRepository powerPlantRepository, PowerPlantMapper powerPlantMapper)
         {
             _powerPlantRepository = powerPlantRepository;
+            _powerPlantMapper = powerPlantMapper;
         }
 
         [HttpGet("get/{id}")]
@@ -25,16 +29,7 @@ namespace API.Controllers
             var powerPlant = await _powerPlantRepository.GetById(id);
             if (powerPlant == null) return NotFound(null);
 
-            // TODO: Centralize mapping
-            var response = new PowerPlantResponse()
-            {
-                Id = powerPlant.Id,
-                Name = powerPlant.Name,
-                InstallationDate = powerPlant.InstallationDate,
-                InstalledPower = powerPlant.InstalledPower,
-                Latitude = (double)powerPlant.Location?.Latitude,
-                Longitude = (double)powerPlant.Location?.Longitude
-            };
+            var response = _powerPlantMapper.FromModelToResponse(powerPlant);
 
             return Ok(response);
         }
@@ -43,10 +38,8 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] PowerPlantUpsertRequest powerPlantRequest)
         {
-            // TODO: Centralize mapping
-            var powerPlant = new PowerPlant(powerPlantRequest.InstalledPower, powerPlantRequest.InstallationDate, 
-                new Domain.Locations.Location(powerPlantRequest.Latitude, powerPlantRequest.Longitude), powerPlantRequest.Name);
-
+            var powerPlant = _powerPlantMapper.FromRequestToModel(powerPlantRequest);
+    
             await _powerPlantRepository.Add(powerPlant);
 
             return CreatedAtAction(nameof(Get), new { id = powerPlant.Id }, new { id = powerPlant.Id });
@@ -55,9 +48,7 @@ namespace API.Controllers
         [HttpPut("update")]
         public async Task<ActionResult> Update([FromBody] PowerPlantUpsertRequest powerPlantRequest)
         {
-            // TODO: Centralize mapping
-            var powerPlant = new PowerPlant(powerPlantRequest.InstalledPower, powerPlantRequest.InstallationDate,
-                new Domain.Locations.Location(powerPlantRequest.Latitude, powerPlantRequest.Longitude), powerPlantRequest.Name);
+            var powerPlant = _powerPlantMapper.FromRequestToModel(powerPlantRequest);
             powerPlant.Id = (int)powerPlantRequest.Id;
 
             var result = await _powerPlantRepository.Update(powerPlant);
@@ -74,7 +65,7 @@ namespace API.Controllers
             var result = await _powerPlantRepository.Delete(id);
             if (!result) return NoContent();
 
-            return Ok("Power Plant deleted");
+            return Ok(new { message = "Power Plant deleted" });
         }
     }
 }

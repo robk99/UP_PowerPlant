@@ -1,4 +1,4 @@
-﻿namespace API.PowerPlants.Responses
+﻿namespace Application.PowerPlants.Responses
 {
     public class PowerPlantResponse : BasePowerPlant
     {

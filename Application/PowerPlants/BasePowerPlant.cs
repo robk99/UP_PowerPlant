@@ -1,4 +1,4 @@
-﻿namespace API.PowerPlants
+﻿namespace Application.PowerPlants
 {
     public abstract class BasePowerPlant
     {

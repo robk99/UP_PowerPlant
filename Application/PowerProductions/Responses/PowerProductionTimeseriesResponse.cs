@@ -1,4 +1,4 @@
-﻿namespace API.PowerProductions.Responses
+﻿namespace Application.PowerProductions.Responses
 {
     public record PowerProductionData
     {

@@ -1,12 +1,12 @@
-using API.PowerProductions.Requests;
-using API.PowerProductions.Responses;
+using Application.PowerProductions;
+using Application.PowerProductions.Requests;
+using Application.PowerProductions.Responses;
 using Application.Services;
 using Application.Services.VisualCrossing;
 using Application.Services.VisualCrossing.Requests;
 using Domain.Enums;
 using Domain.PowerPlants;
 using Domain.PowerProductions;
-using Domain.PowerProductions.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,63 +22,47 @@ namespace API.Controllers
         private readonly TimeseriesService _timeseriesService;
         private readonly IVcAPIClient _vcAPIClient;
         private readonly IVcForecastService _vcForecastService;
+        private readonly PowerProductionMapper _powerProductionMapper;
 
         public PowerProductionController(IPowerProductionRepository powerProductionRepository, IPowerPlantRepository powerPlantRepository,
-            TimeseriesService timeseriesService, IVcAPIClient vcAPIClient, IVcForecastService vcForecastService)
+            TimeseriesService timeseriesService, IVcAPIClient vcAPIClient, IVcForecastService vcForecastService, PowerProductionMapper powerProductionMapper)
         {
             _powerProductionRepository = powerProductionRepository;
             _powerPlantRepository = powerPlantRepository;
             _timeseriesService = timeseriesService;
             _vcAPIClient = vcAPIClient;
             _vcForecastService = vcForecastService;
+            _powerProductionMapper = powerProductionMapper;
         }
 
         [HttpGet("get-timeseries")]
         public async Task<ActionResult<PowerProductionTimeseriesResponse>> GetTimeseries([FromQuery] PowerProductionTimeseriesRequest request)
         {
-            var response = new PowerProductionTimeseriesResponse
-            {
-                PowerPlantId = request.PowerPlantId,
-                Start = request.Start.ToString(),
-                End = request.End.ToString(),
-            };
+            var powerPlant = await _powerPlantRepository.GetById(request.PowerPlantId);
+            if (powerPlant == null) return NotFound("Power Plant not found.");
+
+            var response = _powerProductionMapper.FromTimeseriesRequestToResponse(request);
 
             switch (request.TimeseriesType)
             {
                 case TimeseriesType.RealProduction:
-                    // TODO: Centralize mapping
-                    var query = new PowerProductionTimeseriesQuery
-                    {
-                        PowerPlantId = request.PowerPlantId,
-                        StartDate = request.Start,
-                        EndDate = request.End
-                    };
+                    var query = _powerProductionMapper.FromTimeseriesRequestToQuery(request);
+
                     var powerProductions = await _powerProductionRepository.GetTimeseries(query);
-                    if (powerProductions.Count() == 0) return NotFound("No Power Production or Power Plant doesn't exist.");
+                    if (powerProductions.Count() == 0) return NotFound("No Power Production for this Power Plant.");
 
                     powerProductions = _timeseriesService.HandleGranularity(powerProductions.ToList(), request.Granularity);
 
-                    // TODO: Centralize mapping
-                    foreach (var pp in powerProductions)
-                    {
-                        response.ProductionTimeseries.Add(new PowerProductionData() 
-                            { Timestamp = pp.Timestamp.ToString(), PowerProduced = pp.PowerProduced }
-                        );
-                    }
+                    response = _powerProductionMapper.AddRealProductionTimeseriesToResponse(response, powerProductions);
                     break;
 
                 case TimeseriesType.ForecastedProduction:
-
                     var forecastData = await _vcAPIClient.GetGeospatialWeatherData(
-                        new VcGeospatialWeatherRequest(38.9697, -77.385, request.Start, request.End)
+                        new VcGeospatialWeatherRequest(powerPlant.Location.Latitude, powerPlant.Location.Longitude, request.Start, request.End)
                         );
 
                     if (forecastData == null) return NotFound("Forecast data API returned zero elements for a given period");
 
-                    var powerPlant = await _powerPlantRepository.GetById(request.PowerPlantId);
-                    if (powerPlant == null) return NotFound("Power Plant not found.");
-
-                    // TODO: Centralize mapping
                     foreach (var day in forecastData.Days)
                     {
                         foreach (var hour in day.Hours)

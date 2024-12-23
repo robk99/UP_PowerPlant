@@ -39,7 +39,6 @@ namespace Infrastructure.Services.VisualCrossing
                 {
                     return await JsonSerializer.DeserializeAsync<VcGeospatialWeatherResponse>(contentStream);
                 }
-
             }
         }
 

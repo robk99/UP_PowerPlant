@@ -1,7 +1,4 @@
-﻿
-using Domain.PowerPlants;
-
-namespace Domain.Users
+﻿namespace Domain.Users
 {
     public interface IUserRepository
     {

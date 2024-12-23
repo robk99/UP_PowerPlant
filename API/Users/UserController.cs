@@ -1,5 +1,6 @@
-﻿using API.Authentication.Requests;
+﻿using Application.Authentication.Requests;
 using Application.Authentication;
+using Application.Users;
 using Domain.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +13,14 @@ namespace API.Users
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private readonly IHashingService _hashingService;
+        private readonly UserMapper _userMapper;
 
-        public UserController(IUserRepository userRepository, ITokenService tokenService, IHashingService hashingService)
+        public UserController(IUserRepository userRepository, ITokenService tokenService, IHashingService hashingService, UserMapper userMapper)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
             _hashingService = hashingService;
+            _userMapper = userMapper;
         }
 
         [HttpPost("register")]
@@ -28,8 +31,7 @@ namespace API.Users
                 return Conflict(UserErrors.EmailNotUnique(request.Email));
             }
 
-            // TODO: Centralize mapping
-            var user = new User(request.Email, _hashingService.Hash(request.Password), request.FirstName, request.LastName);
+            var user = _userMapper.FromRegistrationRequestToModel(request);
             await _userRepository.Add(user);
 
             return Created("", new { id = user.Id });

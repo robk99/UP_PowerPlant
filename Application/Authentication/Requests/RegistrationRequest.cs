@@ -1,5 +1,5 @@
 ﻿
-namespace API.Authentication.Requests
+namespace Application.Authentication.Requests
 {
     public record RegistrationRequest
     {

@@ -2,7 +2,6 @@ using Infrastructure;
 using Infrastructure.Data;
 using Application;
 using API;
-using Serilog;
 using API.Infrastructure.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
