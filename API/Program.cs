@@ -1,5 +1,5 @@
-using API.Extensions;
 using Infrastructure;
+using Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +16,7 @@ app.MapHealthChecks("/api/health");
 
 if (app.Environment.IsDevelopment())
 {
-    app.ApplyMigrations();
+    await app.InitialiseDatabase();
 }
 
 app.UseAuthentication();

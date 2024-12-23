@@ -19,11 +19,11 @@ namespace Domain.PowerProductions
         [Required]
         public DateTime Timestamp { get; set; }
 
-        public PowerProduction(float powerProduced, DateTime timestamp, PowerPlant powerPlant)
+        public PowerProduction(float powerProduced, DateTime timestamp, int powerPlantId)
         {
             PowerProduced = powerProduced;
             Timestamp = timestamp;
-            PowerPlant = powerPlant;
+            PowerPlantId = powerPlantId;
         }
 
         // Parameterless constructor for EF Core

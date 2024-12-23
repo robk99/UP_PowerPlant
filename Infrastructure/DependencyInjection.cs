@@ -22,6 +22,22 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddPersistenceLayer(configuration);
+
+            services.AddSingleton<IHashingService, HashingService>();
+
+            services
+                .AddSingleton<ITokenService, TokenService>()
+                .AddJWTAuthentication(configuration)
+                .AddAuthorization();
+
+            return services;
+        }
+
+        private static IServiceCollection AddPersistenceLayer(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddScoped<ISaveChangesInterceptor, UpdateAuditDetailsInterceptor>();
@@ -30,18 +46,13 @@ namespace Infrastructure
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
                 options.UseSqlServer(connectionString);
             });
-            
+
             services
                 .AddScoped<IPowerPlantRepository, PowerPlantRepository>()
                 .AddScoped<IPowerProductionRepository, PowerProductionRepository>()
                 .AddScoped<IUserRepository, UserRepository>();
 
-            services.AddSingleton<IHashingService, HashingService>();
-
-            services
-                .AddSingleton<ITokenService, TokenService>()
-                .AddJWTAuthentication(configuration)
-                .AddAuthorization();
+            services.AddScoped<AppDbContextInitialiser>();
 
             return services;
         }
