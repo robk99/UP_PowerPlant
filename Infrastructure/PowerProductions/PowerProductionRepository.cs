@@ -19,7 +19,7 @@ namespace Infrastructure.PowerProductions
             return await _context.PowerProductions
                 .Where(o => (o.PowerPlantId == query.PowerPlantId) &&
                             (o.Timestamp >= query.StartDate) &&
-                            (o.Timestamp <= query.EndDate))
+                            (o.Timestamp < query.EndDate))
                 .ToListAsync();
         }
     }

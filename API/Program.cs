@@ -1,9 +1,12 @@
 using Infrastructure;
 using Infrastructure.Data;
+using Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddHealthChecks();

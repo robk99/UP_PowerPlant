@@ -96,7 +96,7 @@ namespace Infrastructure.Data
                 powerPlants.Add(powerPlant);
 
                 // Generate Power Production for each 15 minutes since the Installation Date
-                var startTime = installationDate;
+                var startTime = RoundToNearestQuarter(installationDate);
                 var endTime = DateTime.Now;
 
                 while (startTime <= endTime)
@@ -118,6 +118,18 @@ namespace Infrastructure.Data
             _context.Users.Add(adminUser);
 
             await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Helper method used only here for rounding a ProductionPower's  DateTime to the nearest quarter
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        private DateTime RoundToNearestQuarter(DateTime dateTime)
+        {
+            var minutes = (dateTime.Minute / 15) * 15; // Round down to the nearest 15-minute block
+            var roundedTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, minutes, 0);
+            return roundedTime;
         }
     }
 }

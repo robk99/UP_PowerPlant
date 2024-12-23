@@ -1,5 +1,6 @@
 using API.PowerProductions.Requests;
 using API.PowerProductions.Responses;
+using Application.Services;
 using Domain.Enums;
 using Domain.PowerProductions;
 using Domain.PowerProductions.Queries;
@@ -14,9 +15,12 @@ namespace API.Controllers
     public class PowerProductionController : ControllerBase
     {
         private readonly IPowerProductionRepository _powerProductionRepository;
-        public PowerProductionController(IPowerProductionRepository powerProductionRepository)
+        private readonly TimeseriesService _timeseriesService;
+
+        public PowerProductionController(IPowerProductionRepository powerProductionRepository, TimeseriesService timeseriesService)
         {
             _powerProductionRepository = powerProductionRepository;
+            _timeseriesService = timeseriesService;
         }
 
         [HttpGet("get-timeseries")]
@@ -35,6 +39,8 @@ namespace API.Controllers
                     var powerProductions = await _powerProductionRepository.GetTimeseries(query);
                     if (powerProductions.Count() == 0) return NotFound(null);
 
+                    powerProductions = _timeseriesService.HandleGranularity(powerProductions.ToList(), request.Granularity);
+
                     // TODO: Centralize mapping
                     var response = new PowerProductionTimeseriesResponse
                     {
@@ -49,7 +55,6 @@ namespace API.Controllers
                         );
                     }
 
-                    // TODO: Handle granularity
                     return Ok(response);
 
                 case TimeseriesType.ForecastedProduction:
