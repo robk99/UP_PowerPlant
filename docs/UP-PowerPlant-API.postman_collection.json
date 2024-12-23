@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "aca5af0d-9214-439b-b4a6-ec58c93bddd9",
+		"name": "UP-PowerPlant-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9438347"
+	},
+	"item": [
+		{
+			"name": "power-production/get-timeseries",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearerToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5006/api/power-production/get-timeseries?PowerPlantId=1&TimeseriesType=1&Granularity=1&Start=2024-12-24 14:00:00&End=2024-12-24 17:00:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"power-production",
+						"get-timeseries"
+					],
+					"query": [
+						{
+							"key": "PowerPlantId",
+							"value": "1"
+						},
+						{
+							"key": "TimeseriesType",
+							"value": "1"
+						},
+						{
+							"key": "Granularity",
+							"value": "1"
+						},
+						{
+							"key": "Start",
+							"value": "2024-12-24 14:00:00"
+						},
+						{
+							"key": "End",
+							"value": "2024-12-24 17:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "power-plant/get",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearerToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5006/api/power-plant/get/18",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"power-plant",
+						"get",
+						"18"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "power-plant/create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearerToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"asdf\",\r\n    \"installedPower\": 12.4,\r\n    \"installationDate\": \"2024-12-21T14:30:00\",\r\n    \"latitude\": 50,\r\n    \"longitude\": -44.515\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5006/api/power-plant/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"power-plant",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"johndoe@loremipsum.dolor\",\r\n    \"firstName\": \"john\",\r\n    \"lastName\": \"doe\",\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5006/api/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();\r",
+							"const token = responseJson.token;\r",
+							"\r",
+							"pm.environment.set(\"bearerToken\", token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"johndoe@loremipsum.dolor\",\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5006/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "power-plant/update",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearerToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"NEW-NAME\",\r\n    \"installedPower\": 12.4,\r\n    \"installationDate\": \"2024-12-21T14:30:00Z\",\r\n    \"latitude\": 50,\r\n    \"longitude\": -44.515\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5006/api/power-plant/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"power-plant",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "power-plant/delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearerToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5006/api/power-plant/delete/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5006",
+					"path": [
+						"api",
+						"power-plant",
+						"delete",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
